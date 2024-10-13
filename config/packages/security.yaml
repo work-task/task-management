@@ -8,13 +8,14 @@ security:
     app_user_provider:
       entity:
         class: App\Entity\User
-        property: username
+        property: apiKey
   firewalls:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
     main:
       lazy: true
+      stateless: true
       custom_authenticators:
         - App\Security\ApiKeyAuthenticator
 

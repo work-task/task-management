@@ -6,7 +6,7 @@ namespace App\Entity;
 
 use App\Enums\ProjectStatus;
 use App\Repository\ProjectRepository;
-use App\Traits\SoftDeletable;
+use App\Traits\SoftDelete;
 use App\Traits\Timestamp;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Project
 {
     use Timestamp;
-    use SoftDeletable;
+    use SoftDelete;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

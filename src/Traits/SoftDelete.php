@@ -7,7 +7,7 @@ namespace App\Traits;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-trait SoftDeletable
+trait SoftDelete
 {
     #[ORM\Column(name: 'deleted_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     protected ?\DateTimeImmutable $deletedAt = null;

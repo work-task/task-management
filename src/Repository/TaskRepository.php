@@ -20,10 +20,25 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function findByUserProjectAndId(User $user, Project $project, int $taskId): ?Task
+    {
+        return $this->createQueryBuilder('t')
+            ->join('t.project', 'p')
+            ->andWhere('t.id = :taskId')
+            ->andWhere('t.project = :project')
+            ->andWhere('p.user = :user')
+            ->andWhere('t.deletedAt IS NULL')
+            ->setParameter('taskId', $taskId)
+            ->setParameter('project', $project)
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     /**
      * @return array<int, Task>
      */
-    public function findByProjectAndUser(Project $project, User $user): array
+    public function findByProjectAndUser(User $user, Project $project): array
     {
         return $this->createQueryBuilder('t')
             ->join('t.project', 'p')

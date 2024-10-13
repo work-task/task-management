@@ -6,7 +6,7 @@ namespace App\Entity;
 
 use App\Enums\TaskStatus;
 use App\Repository\TaskRepository;
-use App\Traits\SoftDeletable;
+use App\Traits\SoftDelete;
 use App\Traits\Timestamp;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Task
 {
     use Timestamp;
-    use SoftDeletable;
+    use SoftDelete;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

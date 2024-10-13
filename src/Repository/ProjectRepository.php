@@ -19,10 +19,19 @@ class ProjectRepository extends ServiceEntityRepository
         parent::__construct($registry, Project::class);
     }
 
+    public function findByUserAndId(User $user, int $projectId): ?Project
+    {
+        return $this->findOneBy([
+            'user' => $user,
+            'id' => $projectId,
+            'deletedAt' => null,
+        ]);
+    }
+
     /**
      * @return array<int, Project>
      */
-    public function findByUser(User $user): array
+    public function findAllByUser(User $user): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.user = :user')

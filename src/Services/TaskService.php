@@ -11,39 +11,26 @@ use App\Entity\User;
 use App\Enums\TaskStatus;
 use App\Repository\TaskRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
 
 final class TaskService
 {
-    private User $user;
-
     public function __construct(
-        private readonly Security $security,
         private readonly TaskRepository $taskRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        $this->user = $user;
     }
 
-    public function getById(Project $project, int $id): ?Task
+    public function getById(User $user, Project $project, int $id): ?Task
     {
-        return $this->taskRepository->findOneBy([
-            'project' => $project,
-            'user' => $this->user,
-            'id' => $id,
-            'deletedAt' => null,
-        ]);
+        return $this->taskRepository->findByUserProjectAndId($user, $project, $id);
     }
 
     /**
      * @return array<int, Task>
      */
-    public function getAll(Project $project): array
+    public function getAll(User $user, Project $project): array
     {
-        return $this->taskRepository->findByProjectAndUser($project, $this->user);
+        return $this->taskRepository->findByProjectAndUser($user, $project);
     }
 
     public function save(Task $task): void
