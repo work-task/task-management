@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enums\TaskStatus;
@@ -9,6 +11,7 @@ use App\Traits\Timestamp;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'tasks')]
 #[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
@@ -35,15 +38,20 @@ class Task
     protected string $description;
 
     #[ORM\Column(type: Types::INTEGER)]
-    protected int $duration;
+    protected int $duration = 0;
 
     public function __construct()
     {
-        $this->duration = 0;
         $this->status = TaskStatus::Pending->value;
 
         $this->updatedAt = new \DateTimeImmutable();
         $this->createdAt = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function __toString(): string
@@ -51,24 +59,24 @@ class Task
         return $this->title;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): TaskStatus
     {
-        return $this->status;
+        return TaskStatus::from($this->status);
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(TaskStatus $status): static
     {
-        $this->status = $status;
+        $this->status = $status->value;
 
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -80,7 +88,7 @@ class Task
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -92,7 +100,7 @@ class Task
         return $this;
     }
 
-    public function getDuration(): ?int
+    public function getDuration(): int
     {
         return $this->duration;
     }
@@ -104,12 +112,12 @@ class Task
         return $this;
     }
 
-    public function getProject(): ?Project
+    public function getProject(): Project
     {
         return $this->project;
     }
 
-    public function setProject(?Project $project): static
+    public function setProject(Project $project): static
     {
         $this->project = $project;
 

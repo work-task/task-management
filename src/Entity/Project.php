@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Enums\ProjectStatus;
@@ -11,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\HasLifecycleCallbacks]
 #[ORM\Table(name: 'projects')]
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
@@ -37,8 +40,11 @@ class Project
     protected string $description;
 
     #[ORM\Column(type: Types::INTEGER)]
-    protected int $duration;
+    protected int $duration = 0;
 
+    /**
+     * @var Collection<int, Task>
+     */
     #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'cascade')]
     protected Collection $tasks;
@@ -53,29 +59,35 @@ class Project
         $this->tasks = new ArrayCollection();
     }
 
+    #[ORM\PreUpdate]
+    public function onPreUpdate(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
     public function __toString(): string
     {
         return $this->title;
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ProjectStatus
     {
-        return $this->status;
+        return ProjectStatus::from($this->status);
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(ProjectStatus $status): static
     {
-        $this->status = $status;
+        $this->status = $status->value;
 
         return $this;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -87,7 +99,7 @@ class Project
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -99,7 +111,7 @@ class Project
         return $this;
     }
 
-    public function getDuration(): ?int
+    public function getDuration(): int
     {
         return $this->duration;
     }
@@ -111,12 +123,12 @@ class Project
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getUser(): User
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(User $user): static
     {
         $this->user = $user;
 
@@ -143,12 +155,7 @@ class Project
 
     public function removeTask(Task $task): static
     {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getProject() === $this) {
-                $task->setProject(null);
-            }
-        }
+        $this->tasks->removeElement($task);
 
         return $this;
     }

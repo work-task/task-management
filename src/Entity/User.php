@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Table(name: 'users')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -29,13 +30,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected array $roles = [];
 
     #[ORM\Column]
-    protected string $password;
+    protected string $apiKey;
 
+    /**
+     * @var Collection<int, Project>
+     */
     #[ORM\OneToMany(targetEntity: Project::class, mappedBy: 'user', cascade: ['persist', 'remove'], orphanRemoval: true)]
     protected Collection $projects;
 
     public function __construct()
     {
+        $this->roles = ['ROLE_USER'];
         $this->projects = new ArrayCollection();
     }
 
@@ -70,14 +75,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getPassword(): string
+    public function getApiKey(): string
     {
-        return $this->password;
+        return $this->apiKey;
     }
 
-    public function setPassword(string $password): static
+    public function setApiKey(string $apiKey): static
     {
-        $this->password = $password;
+        $this->apiKey = $apiKey;
 
         return $this;
     }
@@ -87,13 +92,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getRoles(): array
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->roles;
     }
 
+    /**
+     * @param string[] $roles
+     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -121,12 +125,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeProject(Project $project): static
     {
-        if ($this->projects->removeElement($project)) {
-            // set the owning side to null (unless already changed)
-            if ($project->getUser() === $this) {
-                $project->setUser(null);
-            }
-        }
+        $this->projects->removeElement($project);
 
         return $this;
     }
