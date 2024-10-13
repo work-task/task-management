@@ -54,6 +54,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     {
         $message = strtr($exception->getMessageKey(), $exception->getMessageData());
 
-        return ResponseFormatter::errors([$message]);
+        return ResponseFormatter::error($message, Response::HTTP_UNAUTHORIZED);
     }
 }

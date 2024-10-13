@@ -16,7 +16,7 @@ class ProjectFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 50; ++$i) {
             $reference = sprintf('user-%d', rand(0, 5));
 
             $user = $this->getReference($reference, User::class);
@@ -30,7 +30,7 @@ class ProjectFixtures extends Fixture implements DependentFixtureInterface
 
             $manager->persist($project);
 
-            $this->addReference('project-' . $i, $project);
+            $this->addReference('project-'.$i, $project);
         }
 
         $manager->flush();

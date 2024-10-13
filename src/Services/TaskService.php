@@ -28,6 +28,19 @@ final class TaskService
         $this->user = $user;
     }
 
+    public function getById(Project $project, int $id): ?Task
+    {
+        return $this->taskRepository->findOneBy([
+            'project' => $project,
+            'user' => $this->user,
+            'id' => $id,
+            'deletedAt' => null,
+        ]);
+    }
+
+    /**
+     * @return array<int, Task>
+     */
     public function getAll(Project $project): array
     {
         return $this->taskRepository->findByProjectAndUser($project, $this->user);

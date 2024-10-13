@@ -62,6 +62,20 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
+        ],
+        "php-cs-fixer": [
+            "vendor/bin/php-cs-fixer fix"
+        ],
+        "phpstan": [
+            "vendor/bin/phpstan"
+        ],
+        "phpunit": [
+            "vendor/bin/phpunit"
+        ],
+        "tests": [
+            "php bin/console d:m:m -n",
+            "php bin/console d:f:l -n",
+            "vendor/bin/phpunit"
         ]
     },
     "conflict": {

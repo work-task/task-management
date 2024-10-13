@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\DTO\Response;
 
-use App\Entity\Project;
 use App\Entity\Task;
 use App\Enums\TaskStatus;
 

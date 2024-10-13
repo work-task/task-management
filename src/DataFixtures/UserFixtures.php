@@ -22,14 +22,14 @@ class UserFixtures extends Fixture
 
         $this->addReference('user-0', $testUser);
 
-        for ($i = 1; $i < 10; $i++) {
+        for ($i = 1; $i < 10; ++$i) {
             $user = (new User())
                 ->setUsername($faker->unique()->userName())
                 ->setApiKey($faker->randomLetter());
 
             $manager->persist($user);
 
-            $this->addReference('user-' . $i, $user);
+            $this->addReference('user-'.$i, $user);
         }
 
         $manager->flush();

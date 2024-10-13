@@ -13,6 +13,7 @@ use App\Services\ProjectService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
@@ -38,12 +39,17 @@ final class ProjectController extends AbstractController
     {
         $project = $this->projectService->saveFromDto($request);
 
-        return ResponseFormatter::success(ProjectResponse::fromEntity($project)->toArray());
+        return ResponseFormatter::success(ProjectResponse::fromEntity($project)->toArray(), Response::HTTP_CREATED);
     }
 
-    #[Route(path: '/{project}', requirements: ['project' => '\d+'], methods: [Request::METHOD_PUT])]
-    public function update(ProjectRequest $request, Project $project, #[CurrentUser] User $user): JsonResponse
+    #[Route(path: '/{projectId}', requirements: ['projectId' => '\d+'], methods: [Request::METHOD_PUT])]
+    public function update(ProjectRequest $request, int $projectId, #[CurrentUser] User $user): JsonResponse
     {
+        $project = $this->projectService->getById($projectId);
+        if (null === $project) {
+            throw $this->createNotFoundException('Project not found');
+        }
+
         if ($user->getId() !== $project->getUser()->getId()) {
             throw $this->createNotFoundException('Project not found');
         }
@@ -53,9 +59,14 @@ final class ProjectController extends AbstractController
         return ResponseFormatter::success(ProjectResponse::fromEntity($project)->toArray());
     }
 
-    #[Route(path: '/{project}', requirements: ['project' => '\d+'], methods: [Request::METHOD_DELETE])]
-    public function delete(Project $project, #[CurrentUser] User $user): JsonResponse
+    #[Route(path: '/{projectId}', requirements: ['projectId' => '\d+'], methods: [Request::METHOD_DELETE])]
+    public function delete(int $projectId, #[CurrentUser] User $user): JsonResponse
     {
+        $project = $this->projectService->getById($projectId);
+        if (null === $project) {
+            throw $this->createNotFoundException('Project not found');
+        }
+
         if ($user->getId() !== $project->getUser()->getId()) {
             throw $this->createNotFoundException('Project not found');
         }

@@ -14,11 +14,26 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 final class ProjectService
 {
+    private User $user;
+
     public function __construct(
         private readonly Security $security,
         private readonly ProjectRepository $projectRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
+        /** @var User $user */
+        $user = $this->security->getUser();
+
+        $this->user = $user;
+    }
+
+    public function getById(int $projectId): ?Project
+    {
+        return $this->projectRepository->findOneBy([
+            'user' => $this->user,
+            'id' => $projectId,
+            'deletedAt' => null,
+        ]);
     }
 
     /**
@@ -26,10 +41,7 @@ final class ProjectService
      */
     public function getAll(): array
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
-        return $this->projectRepository->findByUser($user);
+        return $this->projectRepository->findByUser($this->user);
     }
 
     public function save(Project $project): void
@@ -40,13 +52,10 @@ final class ProjectService
 
     public function saveFromDto(ProjectRequest $request, ?Project $project = null): Project
     {
-        /** @var User $user */
-        $user = $this->security->getUser();
-
         $status = ProjectStatus::from($request->getStatus());
 
         $project ??= new Project();
-        $project->setUser($user);
+        $project->setUser($this->user);
         $project->setStatus($status);
         $project->setTitle($request->getTitle());
         $project->setDescription($request->getDescription());

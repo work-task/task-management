@@ -21,31 +21,32 @@ final class ResponseFormatter
         return new JsonResponse([
             'success' => self::SUCCESS,
             'data' => $data,
-            'validation_errors' => null,
         ], $status);
     }
 
-    /**
-     * @param array<mixed> $errors
-     */
-    public static function errors(array $errors, int $status = Response::HTTP_BAD_REQUEST): JsonResponse
+    public static function error(string $error, int $status = Response::HTTP_BAD_REQUEST): JsonResponse
     {
         return new JsonResponse([
             'success' => self::ERROR,
             'data' => null,
-            'validation_errors' => $errors,
+            'code' => $status,
+            'error' => $error,
         ], $status);
     }
 
     public static function errorFromConstraintList(
         ConstraintViolationListInterface $constraintViolationList,
-        int $status = Response::HTTP_OK,
+        int $status = Response::HTTP_UNPROCESSABLE_ENTITY,
     ): JsonResponse {
         $errors = [];
         foreach ($constraintViolationList as $constraintViolation) {
             $errors[$constraintViolation->getPropertyPath()] = $constraintViolation->getMessage();
         }
 
-        return self::success($errors, $status);
+        return new JsonResponse([
+            'success' => self::ERROR,
+            'data' => null,
+            'validation_errors' => $errors,
+        ], $status);
     }
 }
