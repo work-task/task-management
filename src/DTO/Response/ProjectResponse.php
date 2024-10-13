@@ -6,6 +6,7 @@ namespace App\DTO\Response;
 
 use App\Entity\Project;
 use App\Enums\ProjectStatus;
+use DateTimeImmutable;
 
 final class ProjectResponse
 {
@@ -15,8 +16,8 @@ final class ProjectResponse
         private readonly string $title,
         private readonly string $description,
         private readonly int $duration,
-        private readonly \DateTimeImmutable $createdAt,
-        private readonly \DateTimeImmutable $updatedAt,
+        private readonly DateTimeImmutable $createdAt,
+        private readonly DateTimeImmutable $updatedAt,
     ) {
     }
 

@@ -28,20 +28,6 @@ final class ProjectController extends AbstractController
     {
     }
 
-    #[Route('/tests')]
-    public function test(LoggerInterface $logger, ProjectService $projectService, ProjectRepository $projectRepository): JsonResponse
-    {
-        $eventHandler = new ProjectTasksUpdateHandler(
-            logger: $logger,
-            projectService: $projectService,
-            projectRepository: $projectRepository,
-        );
-
-        $eventHandler(new ProjectTasksUpdate(projectId: 24));
-
-        return new JsonResponse([]);
-    }
-
     #[Route(methods: [Request::METHOD_GET])]
     public function index(#[CurrentUser] User $user): JsonResponse
     {
