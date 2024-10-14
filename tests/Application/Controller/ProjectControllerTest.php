@@ -30,7 +30,7 @@ final class ProjectControllerTest extends ApplicationTestCase
             'success' => 0,
             'data' => [
                 self::EXPECTED_RESPONSE_DATA,
-                '@...@'
+                '@...@',
             ],
         ];
 

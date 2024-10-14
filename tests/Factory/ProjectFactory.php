@@ -3,7 +3,6 @@
 namespace App\Tests\Factory;
 
 use App\Entity\Project;
-use DateTimeImmutable;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -22,8 +21,8 @@ final class ProjectFactory extends PersistentProxyObjectFactory
             'user' => UserFactory::new(),
             'title' => self::faker()->sentence(),
             'description' => self::faker()->paragraph(),
-            'updatedAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'createdAt' => DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }
 }

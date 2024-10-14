@@ -31,6 +31,10 @@ abstract class ApplicationTestCase extends WebTestCase
         UserFactory::createOne(['apiKey' => self::API_KEY]);
     }
 
+    /**
+     * @param array<string, mixed> $parameters
+     * @param array<string, mixed> $server
+     */
     protected function jsonRequestWithAuth(
         string $method,
         string $uri,
@@ -38,7 +42,6 @@ abstract class ApplicationTestCase extends WebTestCase
         array $server = [],
         bool $changeHistory = true,
     ): Crawler {
-
         $server['HTTP_X-Api-Key'] = self::API_KEY;
 
         return $this->client->jsonRequest(
@@ -50,6 +53,9 @@ abstract class ApplicationTestCase extends WebTestCase
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getJsonResponse(): array
     {
         /** @var string $content */
