@@ -41,3 +41,7 @@ curl --location 'http://localhost/api/projects' \
   --header 'X-Api-Key: qwerty' \
   --data '{title": "Test Project", "description": "TEest Project Description"}'
 ```
+
+> [!IMPORTANT]  
+> web part that consumes your API CRUD abilities using php only is placed in
+> **scripts/api-create-project-request.php**
